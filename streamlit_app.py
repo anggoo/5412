@@ -2,8 +2,8 @@ import streamlit as st
 import json
 from collections import defaultdict
 
-st.title("🧮 Multi-JSON Label Point Counter")
-st.markdown("Drag and drop multiple `.json` files below. The app will count how many points each label has across all files.")
+st.title("🔢 Label Counter from JSON")
+st.markdown("Upload multiple `.json` files. This app counts how many times each `label` appears.")
 
 uploaded_files = st.file_uploader("Upload JSON files", type="json", accept_multiple_files=True)
 
@@ -15,14 +15,14 @@ if uploaded_files:
             data = json.load(uploaded_file)
             for shape in data.get("shapes", []):
                 label = shape.get("label")
-                points = shape.get("points", [])
-                label_counts[label] += len(points)
+                if label:
+                    label_counts[label] += 1
         except Exception as e:
-            st.error(f"Error in file {uploaded_file.name}: {e}")
+            st.error(f"❌ Error in file {uploaded_file.name}: {e}")
 
     if label_counts:
-        st.subheader("📊 Points per Label")
+        st.subheader("📊 Label Frequency")
         for label, count in label_counts.items():
-            st.write(f"**{label}**: {count} points")
+            st.write(f"**{label}**: {count} time(s)")
     else:
-        st.warning("No valid labels or points found in uploaded files.")
+        st.warning("No valid labels found in uploaded files.")
